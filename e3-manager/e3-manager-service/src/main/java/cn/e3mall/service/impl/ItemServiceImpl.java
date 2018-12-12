@@ -97,6 +97,8 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	public E3Result removeItem(Integer id) {
+		//取出该id
+		int deleteCount=itemMapper.deleteByPrimaryKey((long)id);
 
 		return null;
 	}
