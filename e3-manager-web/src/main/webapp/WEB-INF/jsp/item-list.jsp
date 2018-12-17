@@ -122,7 +122,11 @@
             				$.messager.alert('提示','删除商品成功!',undefined,function(){
             					$("#itemList").datagrid("reload");
             				});
-            			}
+            			}else if(data.status == 300){
+            			    $.messager.alert('提示',data.msg,undefined,function(){
+                                $("#itemList").datagrid("reload");
+                            })
+                        }
             		});
         	    }
         	});

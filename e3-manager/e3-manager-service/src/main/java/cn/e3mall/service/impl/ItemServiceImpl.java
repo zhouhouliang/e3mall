@@ -1,10 +1,13 @@
 package cn.e3mall.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import cn.e3mall.common.utils.E3Result;
+import cn.e3mall.common.utils.FastDFSClient;
 import cn.e3mall.common.utils.IDUtils;
+import cn.e3mall.common.utils.ImageUrlSplit;
 import cn.e3mall.mapper.TbItemDescMapper;
 import cn.e3mall.pojo.TbItemDesc;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,7 @@ import cn.e3mall.service.ItemService;
  * 商品管理Service
  * <p>Title: ItemServiceImpl</p>
  * <p>Description: </p>
- * <p>Company: www.itcast.cn</p> 
+ * <p>Company: www.itcast.cn</p>
  * @version 1.0
  */
 @Service
@@ -96,10 +99,50 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public E3Result removeItem(Integer id) {
-		//取出该id
-		int deleteCount=itemMapper.deleteByPrimaryKey((long)id);
+	public E3Result deleteItems(Long[] ids) {
+		//是否全部成功
+		boolean flagAllSuccess=true;
+		StringBuffer msg = new StringBuffer();
+		for (Long id:ids) {
+			E3Result e3Result = deleteItem(id);
+			if (200 == e3Result.getStatus()) {
+				msg.append("删除商品"+id+"成功！");
+			}else if (300 == e3Result.getStatus()){
+				msg.append("删除商品"+id+"失败！");
+				flagAllSuccess=false;
+			}
+		}
+		//如果全部成功，就返回status 200
+		if (flagAllSuccess) {
+				return E3Result.ok();
+		} else { //有未成功的就返回 status 300
+			E3Result result =new E3Result();
+			result.setStatus(300);
+			result.setMsg(msg.toString());
+			return result;
+		}
+	}
 
-		return null;
+	private E3Result deleteItem(Long id) {
+		//删除图片
+		//根据id取出图片信息
+		TbItem tbItem = itemMapper.selectByPrimaryKey(id);
+		String mulImage = tbItem.getImage();
+		String[] mulPath= ImageUrlSplit.getMulUrl(mulImage);
+		//FastDFS删除图片
+		try {
+			FastDFSClient fastDFSClient = new FastDFSClient("classpath:resource/client.conf");
+			for (String imagePath:mulPath) {
+				int deleteDone = fastDFSClient.deleteFile(imagePath);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//删除tb_item_desc
+		int itemDescDeleteDone = itemDescMapper.deleteByPrimaryKey( id);
+		//删除tb_item
+		int itemDeleteDone=itemMapper.deleteByPrimaryKey(id);
+		E3Result result = E3Result.ok();
+		return result;
 	}
 }

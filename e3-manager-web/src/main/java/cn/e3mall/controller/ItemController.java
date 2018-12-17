@@ -50,11 +50,28 @@ public class ItemController {
 		return result;
 	}
 
+	/**
+	 *
+	 * @param item
+	 * @param desc
+	 * @return
+	 */
 	@RequestMapping(value = "/item/save")
 	@ResponseBody
 	public E3Result saveItem(TbItem item, String desc) {
 
 		E3Result result = itemService.addItem(item, desc);
 		return result;
+	}
+
+	@RequestMapping(value = "/rest/item/delete")
+	@ResponseBody
+	public E3Result deleteItem(String[] ids){
+		Long[] idsLong=new Long[ids.length];
+		for (int i = 0; i < ids.length; i++) {
+			idsLong[i] = Long.parseLong(ids[i]);
+		}
+		E3Result e3Result = itemService.deleteItems(idsLong);
+		return  e3Result;
 	}
 }

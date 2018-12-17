@@ -15,6 +15,7 @@ public class FastDFSClient {
     public FastDFSClient(String conf) throws Exception {
         if (conf.contains("classpath:")) {
             conf = conf.replace("classpath:", this.getClass().getResource("/").getPath());
+            //将win10，win8系统路径中用%20表示的空格符替换成正常的空格符
             conf = conf.replace("%20", " ");
         }
         ClientGlobal.init(conf);
@@ -74,6 +75,7 @@ public class FastDFSClient {
     }
 
     /**
+     * 从fastDFS中删除iamge
      * @param filePath 文件路径
      * @return -1失败 0 成功 2 找不到文件
      * @throws Exception

@@ -7,11 +7,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="e3common" />
+        <module name="e3contentinterface" />
+        <module name="e3contentservice" />
         <module name="e3managerdao" />
         <module name="e3managerinterface" />
         <module name="e3managerpojo" />
         <module name="e3managerservice" />
         <module name="e3managerweb" />
+        <module name="e3portalweb" />
       </profile>
     </annotationProcessing>
   </component>
